@@ -50,7 +50,6 @@ function onText(msg) {
                     var reply = 'Which one?';
                     var markup = JSON.stringify({
                         keyboard: processes.map(process => [process.id]),
-                        force_reply: true,
                         one_time_keyboard: true
                     });
                     bot.sendMessage(chatId, reply, {reply_markup: markup}).
@@ -75,16 +74,18 @@ function onText(msg) {
                         tasks   = JSON.parse(responses[2]).length,
                         answers = JSON.parse(responses[3]).length;
                     var reply = `[${process.description}](${processURL})\n*Workers:* ${workers}.\n*Tasks:* ${tasks}.\n*Answers:* ${answers}.`;
-                    bot.sendMessage(chatId, reply, {parse_mode: 'Markdown'});
+                    var markup = JSON.stringify({hide_keyboard: true});
+                    bot.sendMessage(chatId, reply, {parse_mode: 'Markdown', reply_markup: markup});
                 });
                 break;
         }
         delete state[userId];
     }
 
-    if (text == '/cancel' && state[userId].text) {
-        var reply = `Cancelling the ${state[userId].text} operation.`;
-        bot.sendMessage(chatId, reply);
+    if (text == '/cancel') {
+        var reply = !!state[userId] ? `Cancelling the ${state[userId].text} operation.` : 'Cancelling nothing.';
+        var markup = JSON.stringify({hide_keyboard: true});
+        bot.sendMessage(chatId, reply, {reply_markup: markup});
         delete state[userId];
     }
 
