@@ -52,7 +52,7 @@ function onText(msg) {
                         workers = JSON.parse(responses[1]).length,
                         tasks   = JSON.parse(responses[2]).length,
                         answers = JSON.parse(responses[3]).length;
-                    var reply = `${process.description}\n*Workers:* ${workers}.\n*Tasks:* ${tasks}.\n*Answers:* ${answers}.`;
+                    var reply = `[${process.description}](${processURL})\n*Workers:* ${workers}.\n*Tasks:* ${tasks}.\n*Answers:* ${answers}.`;
                     bot.sendMessage(chatId, reply, {reply_to_message_id: messageId, parse_mode: 'Markdown'});
                 });
             } else {
