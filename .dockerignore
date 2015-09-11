@@ -4,3 +4,4 @@ Dockerfile
 log
 docker-compose.yml
 README.md
+*.example

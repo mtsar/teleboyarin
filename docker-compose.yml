@@ -1,8 +1,0 @@
-app:
-  build: .
-  volumes:
-    - log:/teleboyarin/log
-  environment:
-    - MTSAR_API_URL=http://mtsar:8080
-    - SENTRY_DSN=http://ae9465d0fa324506bcc84ca8e94b62fe:2273203256194370ab9df3c400a97c92@sentry:9000/6
-  restart: always
