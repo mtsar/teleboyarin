@@ -1,0 +1,23 @@
+{
+  "name": "teleboyarin",
+  "version": "0.0.0",
+  "description": "A Mechanical Tsar servant speaking over Telegram.",
+  "main": "teleboyarin.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "dustalov/teleboyarin",
+  "keywords": [
+    "crowdsourcing",
+    "mechanical tsar",
+    "telegram"
+  ],
+  "author": "Dmitry Ustalov",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dustalov/teleboyarin/issues"
+  },
+  "dependencies": {
+    "node-telegram-bot-api": "^0.12.1"
+  }
+}
