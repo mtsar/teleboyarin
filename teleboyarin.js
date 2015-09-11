@@ -34,7 +34,7 @@ function onText(msg) {
             case '/version':
                 request.get(`${config.apiURL}/version`, function(err, data, body) {
                     var reply = `Mechanical Tsar v${body}`;
-                    bot.sendMessage(chatId, reply, {reply_to_message_id: messageId});
+                    bot.sendMessage(chatId, reply);
                 });
                 break;
             case '/processes':
