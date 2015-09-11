@@ -16,6 +16,12 @@ bot.on('text', onText);
 function onText(msg) {
     var chatId = msg.chat.id, messageId = msg.message_id;
     var suffix = msg.text.split(' '), prefix = suffix.shift();
+
+    if (!!config.disabled) {
+        bot.sendMessage(chatId, 'I am relaxing.');
+        return;
+    }
+
     console.log(msg);
 
     switch (prefix) {
