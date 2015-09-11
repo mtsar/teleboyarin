@@ -18,6 +18,8 @@
     "url": "https://github.com/dustalov/teleboyarin/issues"
   },
   "dependencies": {
-    "node-telegram-bot-api": "^0.12.1"
+    "node-telegram-bot-api": "^0.12.1",
+    "request": "^2.58.0",
+    "raven": "^0.8.1"
   }
 }
