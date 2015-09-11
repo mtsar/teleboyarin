@@ -1,14 +1,8 @@
 app:
   build: .
   volumes:
-    - stdout.log:/teleboyarin/stdout.log
-    - stderr.log:/teleboyarin/stderr.log
+    - log:/teleboyarin/log
   environment:
     - MTSAR_API_URL=http://mtsar:8080
-    - SENTRY_DSN=http://eba94707c18e42e89bb98881c8b7f195:47eef378682847e885729fbf91ad90ae@sentry:9000/4
-  external_links:
-    - "mtsar_app_1:mtsar"
-    - "sentry_app_1:sentry"
-  ports:
-    - "8800:8841"
+    - SENTRY_DSN=http://ae9465d0fa324506bcc84ca8e94b62fe:2273203256194370ab9df3c400a97c92@sentry:9000/6
   restart: always

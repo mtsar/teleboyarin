@@ -1,2 +1,2 @@
 #!/bin/sh
-node teleboyarin.js 2>>stderr.log >>stdout.log
+node teleboyarin.js 2>>log/stderr.log >>log/stdout.log
