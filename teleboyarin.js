@@ -5,6 +5,9 @@ var TelegramBot = require('node-telegram-bot-api'),
     raven = require('raven'),
     repl = require('repl');
 
+var sentry = new raven.Client(process.env.SENTRY_DSN);
+sentry.patchGlobal();
+
 if (process.env.TELEGRAM_TOKEN) config.token = process.env.TELEGRAM_TOKEN;
 
 var state = {};
