@@ -1,14 +1,14 @@
 var TelegramBot = require('node-telegram-bot-api'),
-    request = require('request')
     rp = require('request-promise'),
     config = require('./config.json'),
     raven = require('raven'),
     repl = require('repl');
 
-var sentry = new raven.Client(process.env.SENTRY_DSN);
-sentry.patchGlobal();
+if (process.env.SENTRY_DSN) raven.Client(process.env.SENTRY_DSN).patchGlobal();
 
 if (process.env.TELEGRAM_TOKEN) config.token = process.env.TELEGRAM_TOKEN;
+
+request = rp.defaults({headers: { 'Accept': 'application/json' }});
 
 var state = {};
 
@@ -27,28 +27,26 @@ function onText(msg) {
         return;
     }
 
-    console.log(msg);
-
     function stateInitial() {
         switch (text) {
             case '/start':
                 bot.sendMessage(chatId, 'Hi, ' + msg.from.first_name + '!');
                 break;
             case '/version':
-                request.get(`${config.apiURL}/version`, function(err, data, body) {
+                request.get(`${config.apiURL}/version`).then(body => {
                     var reply = `Mechanical Tsar v${body}`;
                     bot.sendMessage(chatId, reply);
                 });
                 break;
             case '/processes':
-                request.get(`${config.apiURL}/processes`, function(err, data, body) {
+                request.get(`${config.apiURL}/processes`).then(body => {
                     var processes = JSON.parse(body);
                     var reply = processes.map(process => `*${process.id}*: ${process.description}`).join("\n");
                     bot.sendMessage(chatId, reply, {parse_mode: 'Markdown'});
                 });
                 break;
             case '/process':
-                request.get(`${config.apiURL}/processes`, function(err, data, body) {
+                request.get(`${config.apiURL}/processes`).then(body => {
                     var processes = JSON.parse(body);
                     var reply = 'Which one?';
                     var markup = JSON.stringify({
@@ -67,16 +65,16 @@ function onText(msg) {
     function stateProcess() {
         switch (text) {
             default:
-                var processURL = `${config.apiURL}/processes/${text}`,
-                    workersURL = `${config.apiURL}/processes/${text}/workers`,
-                    tasksURL   = `${config.apiURL}/processes/${text}/tasks`,
-                    answersURL = `${config.apiURL}/processes/${text}/answers`;
-                Promise.all([rp.get(processURL), rp.get(workersURL), rp.get(tasksURL), rp.get(answersURL)]).then(responses => {
+                var processReq = request.get(`${config.apiURL}/processes/${text}`),
+                    workersReq = request.get(`${config.apiURL}/processes/${text}/workers`),
+                    tasksReq   = request.get(`${config.apiURL}/processes/${text}/tasks`),
+                    answersReq = request.get(`${config.apiURL}/processes/${text}/answers`);
+                Promise.all([processReq, workersReq, tasksReq, answersReq]).then(responses => {
                     var process = JSON.parse(responses[0]),
                         workers = JSON.parse(responses[1]).length,
                         tasks   = JSON.parse(responses[2]).length,
                         answers = JSON.parse(responses[3]).length;
-                    var reply = `[${process.description}](${processURL})\n*Workers:* ${workers}.\n*Tasks:* ${tasks}.\n*Answers:* ${answers}.`;
+                    var reply = `[${process.description}](${processReq.uri.href})\n*Workers:* ${workers}.\n*Tasks:* ${tasks}.\n*Answers:* ${answers}.`;
                     var markup = JSON.stringify({hide_keyboard: true});
                     bot.sendMessage(chatId, reply, {parse_mode: 'Markdown', reply_markup: markup});
                 });
