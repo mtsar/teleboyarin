@@ -20,6 +20,7 @@
   "dependencies": {
     "node-telegram-bot-api": "^0.12.1",
     "request-promise": "^0.4.3",
+    "ioredis": "^1.9.0",
     "raven": "^0.8.1"
   }
 }
