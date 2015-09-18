@@ -136,16 +136,24 @@ function stateAnnotate(text, msg, state) {
             if (process) {
                 getWorker(process, msg.from.id).then((worker) => {
                     request.get(`${config.apiURL}/processes/${process.id}/workers/${worker.id}/task`).then((response) => {
-                        const allocation = JSON.parse(response);
-                        const task = allocation.tasks[0];
-                        const reply = task.description;
-                        const markup = JSON.stringify({
-                              keyboard: task.answers.map((answer) => [answer]).concat([['/stop']]),
-                              one_time_keyboard: true
-                        });
-                        bot.sendMessage(msg.chat.id, reply, {parse_mode: 'Markdown', reply_markup: markup}).then(() => {
-                            redis.set(msg.from.id, JSON.stringify({text: '/annotate/answer', process: process, worker: worker, task: task}));
-                        });
+                        if (!response || 0 === response.length) {
+                            bot.sendMessage(msg.chat.id, reply, {parse_mode: 'Markdown', reply_markup: markup}).then(() => {
+                                const reply = 'Thank you, but this process has already been finished.';
+                                const markup = JSON.stringify({hide_keyboard: true});
+                                redis.del(msg.from.id).then(() => bot.sendMessage(msg.chat.id, reply, {parse_mode: 'Markdown', reply_markup: markup}));
+                            });
+                        } else {
+                            const allocation = JSON.parse(response);
+                            const task = allocation.tasks[0];
+                            const reply = task.description;
+                            const markup = JSON.stringify({
+                                  keyboard: task.answers.map((answer) => [answer]).concat([['/stop']]),
+                                  one_time_keyboard: true
+                            });
+                            bot.sendMessage(msg.chat.id, reply, {parse_mode: 'Markdown', reply_markup: markup}).then(() => {
+                                redis.set(msg.from.id, JSON.stringify({text: '/annotate/answer', process: process, worker: worker, task: task}));
+                            });
+                        }
                     })
                 });
             }
