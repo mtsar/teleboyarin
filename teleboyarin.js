@@ -151,7 +151,7 @@ function stateAnnotate(text, msg, state) {
 function stateAnnotateAnswer(text, msg, state) {
     switch (text) {
         case '/stop': {
-            const reply = 'Thank you for your service!';
+            const reply = 'Thank you for your help!';
             const markup = JSON.stringify({hide_keyboard: true});
             redis.del(msg.from.id).then(() => bot.sendMessage(msg.chat.id, reply, {reply_markup: markup}));
         }
