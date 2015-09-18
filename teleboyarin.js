@@ -137,11 +137,9 @@ function stateAnnotate(text, msg, state) {
                 getWorker(process, msg.from.id).then((worker) => {
                     request.get(`${config.apiURL}/processes/${process.id}/workers/${worker.id}/task`).then((response) => {
                         if (!response || 0 === response.length) {
-                            bot.sendMessage(msg.chat.id, reply, {parse_mode: 'Markdown', reply_markup: markup}).then(() => {
-                                const reply = 'Thank you, but this process has already been finished.';
-                                const markup = JSON.stringify({hide_keyboard: true});
-                                redis.del(msg.from.id).then(() => bot.sendMessage(msg.chat.id, reply, {parse_mode: 'Markdown', reply_markup: markup}));
-                            });
+                            const reply = 'Thank you, but this process has already been finished.';
+                            const markup = JSON.stringify({hide_keyboard: true});
+                            redis.del(msg.from.id).then(() => bot.sendMessage(msg.chat.id, reply, {parse_mode: 'Markdown', reply_markup: markup}));
                         } else {
                             const allocation = JSON.parse(response);
                             const task = allocation.tasks[0];
