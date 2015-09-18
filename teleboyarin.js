@@ -1,6 +1,7 @@
 const TelegramBot = require('node-telegram-bot-api'),
       rp = require('request-promise'),
       config = require('./config.json'),
+      package = require('./package.json'),
       raven = require('raven'),
       repl = require('repl');
 
@@ -8,7 +9,10 @@ if (process.env.SENTRY_DSN) new raven.Client(process.env.SENTRY_DSN).patchGlobal
 
 if (process.env.TELEGRAM_TOKEN) config.token = process.env.TELEGRAM_TOKEN;
 
-const request = rp.defaults({headers: { 'Accept': 'application/json' }});
+const request = rp.defaults({headers: {
+    'User-Agent': `Teleboyarin/${package.version}`,
+    'Accept': 'application/json'
+}});
 
 var workers = {}, state = {};
 
