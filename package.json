@@ -1,6 +1,6 @@
 {
   "name": "teleboyarin",
-  "version": "0.0.0",
+  "version": "0.9.9",
   "description": "A Mechanical Tsar servant speaking over Telegram.",
   "main": "teleboyarin.js",
   "scripts": {
