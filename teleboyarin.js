@@ -72,7 +72,7 @@ function onText(msg) {
 function stateInitial(text, msg, state) {
     switch (text) {
         case '/start':
-            bot.sendMessage(msg.chat.id, 'Hi, ' + msg.from.first_name + '!');
+            bot.sendMessage(msg.chat.id, `Hi, ${msg.from.first_name}!`);
         break;
         case '/version':
             request.get(`${config.apiURL}/version`).then((body) => {
