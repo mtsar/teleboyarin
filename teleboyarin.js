@@ -37,6 +37,12 @@ function getWorker(process, userId) {
     );
 }
 
+const whiteList = process.env.MTSAR_PROCESSES ? process.env.MTSAR_PROCESSES.split(',') : config.processes;
+
+function filterProcesses(processes) {
+    return whiteList ? processes.filter((process) => whiteList.indexOf(process.id) > -1) : processes;
+}
+
 const bot = new TelegramBot(config.token, {
     polling: true
 });
@@ -82,7 +88,7 @@ function stateInitial(text, msg, state) {
         break;
         case '/processes':
             request.get(`${config.apiURL}/processes`).then((body) => {
-                const processes = JSON.parse(body);
+                const processes = filterProcesses(JSON.parse(body));
                 const reply = processes.map((process) => `*${process.id}*: ${process.description}`).join("\n");
                 bot.sendMessage(msg.chat.id, reply, {parse_mode: 'Markdown'});
             });
@@ -90,7 +96,7 @@ function stateInitial(text, msg, state) {
         case '/process':
         case '/annotate':
             request.get(`${config.apiURL}/processes`).then((body) => {
-                const processes = JSON.parse(body);
+                const processes = filterProcesses(JSON.parse(body));
                 const reply = 'Which one?';
                 const markup = JSON.stringify({
                       keyboard: processes.map((process) => [process.id]),
@@ -107,19 +113,22 @@ function stateInitial(text, msg, state) {
 }
 
 function stateProcess(text, msg, state) {
-    const processReq = request.get(`${config.apiURL}/processes/${text}`),
-          workersReq = request.get(`${config.apiURL}/processes/${text}/workers`),
-          tasksReq   = request.get(`${config.apiURL}/processes/${text}/tasks`),
-          answersReq = request.get(`${config.apiURL}/processes/${text}/answers`);
-    Promise.all([processReq, workersReq, tasksReq, answersReq]).then((responses) => {
-        const process = JSON.parse(responses[0]),
-              workers = JSON.parse(responses[1]).length,
-              tasks   = JSON.parse(responses[2]).length,
-              answers = JSON.parse(responses[3]).length;
-        const reply = `[${process.description}](${processReq.uri.href})\n*Workers:* ${workers}.\n*Tasks:* ${tasks}.\n*Answers:* ${answers}.`;
-        const markup = JSON.stringify({hide_keyboard: true});
-        redis.del(msg.from.id).then(() => bot.sendMessage(msg.chat.id, reply, {parse_mode: 'Markdown', reply_markup: markup}));
-    });
+    const process = state.processes.find((p) => p.id == text);
+    if (process) {
+        const processReq = request.get(`${config.apiURL}/processes/${text}`),
+              workersReq = request.get(`${config.apiURL}/processes/${text}/workers`),
+              tasksReq   = request.get(`${config.apiURL}/processes/${text}/tasks`),
+              answersReq = request.get(`${config.apiURL}/processes/${text}/answers`);
+        Promise.all([processReq, workersReq, tasksReq, answersReq]).then((responses) => {
+            const process = JSON.parse(responses[0]),
+                  workers = JSON.parse(responses[1]).length,
+                  tasks   = JSON.parse(responses[2]).length,
+                  answers = JSON.parse(responses[3]).length;
+            const reply = `[${process.description}](${processReq.uri.href})\n*Workers:* ${workers}.\n*Tasks:* ${tasks}.\n*Answers:* ${answers}.`;
+            const markup = JSON.stringify({hide_keyboard: true});
+            redis.del(msg.from.id).then(() => bot.sendMessage(msg.chat.id, reply, {parse_mode: 'Markdown', reply_markup: markup}));
+        });
+    }
 }
 
 function stateAnnotate(text, msg, state) {
