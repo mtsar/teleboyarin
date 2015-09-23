@@ -89,8 +89,13 @@ function stateInitial(text, msg, state) {
         case '/processes':
             request.get(`${config.apiURL}/processes`).then((body) => {
                 const processes = filterProcesses(JSON.parse(body));
-                const reply = processes.map((process) => `*${process.id}*: ${process.description}`).join("\n");
-                bot.sendMessage(msg.chat.id, reply, {parse_mode: 'Markdown'});
+                if (processes.length > 0) {
+                    const reply = processes.map((process) => `*${process.id}*: ${process.description}`).join("\n");
+                    bot.sendMessage(msg.chat.id, reply, {parse_mode: 'Markdown'});
+                } else {
+                    const reply = "No processes.";
+                    bot.sendMessage(msg.chat.id, reply, {parse_mode: 'Markdown'});
+                }
             });
         break;
         case '/process':
