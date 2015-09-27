@@ -1,4 +1,4 @@
-FROM node:4.0
+FROM node:latest
 MAINTAINER Dmitry Ustalov
 WORKDIR /teleboyarin
 COPY package.json /teleboyarin/package.json
