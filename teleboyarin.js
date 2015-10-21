@@ -28,12 +28,13 @@ function getWorker(process, userId) {
     if (userId in workers[process.id]) return new Promise((resolve, reject) => resolve(workers[process.id][userId]));
     const workerGetReq = `${config.apiURL}/processes/${process.id}/workers/tagged/telegram${userId}`,
           workerPostReq = `${config.apiURL}/processes/${process.id}/workers`;
-    return new Promise((resolve, reject) =>
-        request.get(workerGetReq).
-            then((worker) => resolve(workers[process.id][userId] = JSON.parse(worker))).
-            catch((err) => err.statusCode !== 404 ? reject(err) : request.post(workerPostReq, {form: {tags: `telegram${userId}`}})).
+    return new Promise((resolve, reject) => request.get(workerGetReq).
+        then((worker) => !!worker ?
+            resolve(workers[process.id][userId] = JSON.parse(worker)) :
+            request.post(workerPostReq, {form: {tags: `telegram${userId}`}})).
                 then((worker) => resolve(workers[process.id][userId] = JSON.parse(worker))).
-                catch((err) => reject(err))
+                catch((err) => reject(err)).
+        catch((err) => reject(err))
     );
 }
 

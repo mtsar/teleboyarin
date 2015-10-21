@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": "dustalov/teleboyarin",
+  "repository": "mtsar/teleboyarin",
   "keywords": [
     "crowdsourcing",
     "mechanical tsar",
@@ -15,12 +15,13 @@
   "author": "Dmitry Ustalov",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dustalov/teleboyarin/issues"
+    "url": "https://github.com/mtsar/teleboyarin/issues"
   },
   "dependencies": {
-    "node-telegram-bot-api": "^0.12.1",
-    "request-promise": "^0.4.3",
-    "ioredis": "^1.9.0",
+    "node-telegram-bot-api": "^0.15.0",
+    "request-promise": "^1.0.1",
+    "continuation-local-storage": "^3.1",
+    "ioredis": "^1.9.1",
     "raven": "^0.8.1"
   }
 }
